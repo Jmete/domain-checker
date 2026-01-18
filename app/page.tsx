@@ -16,6 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Download, Search, Check, X, AlertCircle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const DEFAULT_TLDS = ['.com', '.net', '.io', '.ai', '.dev']
 
@@ -261,7 +262,8 @@ export default function Home() {
         </div>
 
         {results.length > 0 && (
-          <Card>
+          <TooltipProvider>
+            <Card>
             <CardHeader>
               <CardTitle>Results</CardTitle>
               <CardDescription>
@@ -289,12 +291,28 @@ export default function Home() {
                           const result = domainMap.get(domain)?.get(tld)
                           return (
                             <TableCell key={tld} className="text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                {getStatusIcon(result)}
-                                <span className="text-sm">
-                                  {result?.status}
-                                </span>
-                              </div>
+                              {result?.status === 'Error' ? (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex items-center justify-center gap-2 cursor-help">
+                                      {getStatusIcon(result)}
+                                      <span className="text-sm">
+                                        {result.status}
+                                      </span>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{result.error || 'Unknown error'}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              ) : (
+                                <div className="flex items-center justify-center gap-2">
+                                  {getStatusIcon(result)}
+                                  <span className="text-sm">
+                                    {result?.status}
+                                  </span>
+                                </div>
+                              )}
                             </TableCell>
                           )
                         })}
@@ -305,6 +323,7 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+          </TooltipProvider>
         )}
       </div>
     </div>
