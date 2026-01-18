@@ -19,7 +19,8 @@ interface DomainResult {
 }
 
 async function checkDomain(domain: string, tld: string): Promise<DomainResult> {
-  const fullDomain = `${domain}.${tld}`
+  const normalizedTld = tld.startsWith('.') ? tld.slice(1) : tld
+  const fullDomain = `${domain}.${normalizedTld}`
   
   try {
     // Try to resolve the domain using DNS
